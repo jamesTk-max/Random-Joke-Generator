@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        *{
+    margin: 0;
+    padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
+}
+body{
+    background-color: #1E1E2E;
+    color: #eee;
+}
+button{
+    background-color: #FF79C6;
+    color: #fff;
+    border: none;
+    padding: 10px;
+}
+button:hover{
+    background-color: #BD93F9;
+}
+.container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+p{
+    padding-left: 10px;
+}
+h1{
+    padding-top: 10px;
+    padding-left: 10px;
+}
+.p1{
+    color: #F8F8F2;
+    font-weight: bold;
+}
+.p2{
+    color: #A6E22E;
+    font-style: italic;
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Random Joke Generator</h1>
+        <p class="p1"></p>
+        <p class="p2"></p>
+        <button>Generate A Joke</button>
+    </div>
+    
+    <script>
+        const p1 = document.querySelector('.p1')
+        const p2 = document.querySelector('.p2')
+        const button = document.querySelector('button')
+
+        button.addEventListener('click', ()=>{
+            fetch('https://official-joke-api.appspot.com/random_joke')
+    .then(response =>{
+        if (!response.ok) {
+            if (response.status === 404) {
+                        alert("Can't find a joke this time, Try again later")
+                    }
+            else if(response.status === 429){
+                        alert('Too many requests, please wait a moment before getting another joke.')
+                    }
+            else if(response.status === 500){
+                        alert('There seems to be a problem on the server.')
+                    }
+            else{
+                alert('Something went wrong!, Try again later')
+            }        
+        }
+        return response.json()
+    })
+    .then(data =>{
+        if (!data.setup || !data.punchline) {
+            p1.textContent = "Why don't skeletons fight each other?"
+            p2.textContent = "Because they don't have the guts."
+        }
+        p1.textContent = data.setup 
+        p2.textContent = data.punchline
+        p2.style.opacity = '1'
+    })
+    .catch(error =>{
+        if (error.message === 'Failed to fetch') {
+            alert('No internet connection! Please chack your network and try again.')
+        }
+        else{
+            p1.textContent = 'Please try again later.'
+        }
+    })
+        })
+        
+    </script>
+</body>
+</html>
